@@ -1,0 +1,94 @@
+---
+title: "Assignment_1"
+author: "Logan Luchs"
+date: "2025-02-11"
+output: html_document
+---
+
+
+1. You type the R Code in the upper left box of R Studio, 
+and the box below shows the output of the code that is ran. 
+The plots show up in the plots tab of the bottom right hand box.  T
+he global environment is all of the objects or data that is stored in your session.
+If you store a plot in X it will show up as X in the global environment window. 
+You can get help with a function by doing the ?func comamand or by looking in the help tab of the bottom right hand box
+An R Package is a collection of functions or commands that can be ran in R.
+You can find installed packages by looking in the packages tab (if they are loaded they will have a check mark next to them).
+The working directory is the same place where your project has been created. If you go to the files tab you can find where the working directory is by default.
+You can set your working directory differently and the project file should move with iterators
+A relative file path is in realation to your project file, but absolute file path is from your laptop. Eg; //users/logan/...
+
+2. First create a github account. Create a new repository with a readme file and a liscence of your choosing.
+Next download git for windows so that it can be compatible for R.
+Install Git and then open RStudio.
+Click Open new project.
+Click Version Control.
+Insert the URL of your newly created repository on github
+The rest of that should autopopulate with what you created on github.
+Hit create Project.
+https://github.com/Logz1n/Reproducibility_Class
+is the one I made for the class assignments
+
+3. A vector is a variable with multiple values stored into it eg; x <- 1,2,3,4,5
+A dataframe is a table of data with the rows having observations and columns are variables that you are interested in.
+Matrices are 2 dimensional data frames that can be made with similar data types. Math is typically done for this.
+Statistics are also reported in this format.
+
+```{r}
+# Create a vector z with values from 1 to 200
+z <- 1:200
+
+# Calculate the mean of vector z
+mean(z)
+
+# Calculate the standard deviation of vector z
+sd(z)
+
+# Create a logical vector zlog where values in z greater than 30 are labeled "TRUE", otherwise "FALSE"
+zlog <- ifelse(z > 30, "TRUE", "FALSE")
+
+# Create a data frame zdf with columns z and zlog
+zdf <- data.frame(z, zlog)
+
+# Rename the columns of zdf to "zvec" and "zlogic"
+colnames(zdf) <- c("zvec", "zlogic")
+
+# Add a new column zsquared to zdf, which is the square of the values in zvec
+zdf$zsquared <- zdf$zvec^2
+
+# Create a subset zdf1 of zdf where zsquared is greater than 10
+zdf1 <- zdf[zdf$zsquared > 10,]
+
+# Further subset zdf1 where zsquared is less than 100
+zdf1[zdf1$zsquared < 100,]  
+
+# Create another subset zdf2 of zdf where zsquared is greater than 10
+zdf2  <- subset(zdf, zsquared > 10)
+
+# Further subset zdf2 where zsquared is less than 100
+subset(zdf2, zsquared < 100)
+
+# Access the 26th row of zdf
+zdf[26,]
+
+# Access the value in the 180th row and zsquared of zdf
+zdf[180,3]
+```
+
+```{r}
+Tips <- read.csv("Assignment 1/TipsR.csv", sep = ",")
+#The file was read correctly because when I looked at the file there was a delimiter seperating the . from the rest of the columns. When looked at in R, the it read the same exact way. I also double made sure by specifying what the delimiter was instead of using the default code.
+
+
+
+
+
+
+
+
+
+
+
+
+```
+
