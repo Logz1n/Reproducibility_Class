@@ -1,0 +1,107 @@
+---
+title: "Assignment_2"
+author: "Logan Luchs"
+date: "2025-02-17"
+output: html_document
+---
+###Loading Libraries
+```{r}
+library(ggplot2)
+library(readr)
+```
+
+###Loading Data
+```{r}
+MycotoxinData <- read.csv("Assignments/Assignment 2/MycotoxinData.csv", na = "na" ) #loading in the data so that R understands na is na so the column is numeric
+str(MycotoxinData) #checking to make sure data was loaded in correctly
+MycotoxinData$Cultivar <- as.factor(MycotoxinData$Cultivar) #since we are going to facet wrap it makes life easier to make the column a facter instead of a character.
+
+
+cbbPalette <- c("#E69F00", "#56B4E9","#000000", "#009E73", "#F0E442",
+"#0072B2", "#D55E00", "#CC79A7") #loading a color pallette
+```
+
+#1. The three elements you need in a gpplot, is your data file, an aesthetic mapping and a geom. A geom is essecntially how you want your data plotted "geom_bar" yields a bar graph. Faceting is subsetting the data by a variable such as field or culitvar. It will seperate your data based on that variable. A layer is a part of the ggplot2 code which adds a new layer to create a complex plot of multiple layers. A layer can be made by the geom creation. X and Y variables can be stated in the AES() section. They can be further modified in specific geoms like geom_point.
+
+
+```{r}
+#2.
+DON_Plot <- ggplot(MycotoxinData, aes(x = Treatment, y = DON, color = Cultivar)) + 
+  geom_boxplot() +
+  ylab("DON (ppm)") +
+  xlab(" ")
+#This R code creates a boxplot using the ggplot2 package to visualize the distribution of DON levels across different treatments, with the data grouped by cultivar. The code starts by initializing the ggplot object with the MycotoxinData dataset, mapping the Treatment variable to the x-axis, the DON variable to the y-axis, and using the Cultivar variable to color the data points. It then adds a boxplot layer to the plot, which helps in visualizing the distribution and spread of the DON values for each treatment. The y-axis is labeled "DON (ppm)" to indicate the concentration of DON in parts per million, while the x-axis label is set to an empty string, effectively removing it. The resulting plot will display boxplots of DON levels for each treatment, with different colors representing different cultivars.
+```
+
+#3 + 4.
+```{r}
+DON_Plot <- ggplot(MycotoxinData, aes(x = Treatment, y = DON, fill = Cultivar)) + 
+  stat_summary(fun=mean, geom="bar", position = "dodge") +
+  stat_summary(fun.data = mean_se, geom = "errorbar", position = "dodge") +
+  ylab("DON (ppm)") +
+  xlab(" ") +
+  geom_point(position=position_jitterdodge(dodge.width=0.9), shape = 21, color = "#000") 
+#i was having issues making the circles with black outlines in front of the bars, so I chose to recolour the bars to fulfill your condition of black outline of the circles.
+
+#This R code creates a bar plot using the ggplot2 package to visualize the mean DON levels across different treatments, with the data grouped by cultivar. The code begins by initializing the ggplot object with the MycotoxinData dataset, mapping the Treatment variable to the x-axis, the DON variable to the y-axis, and using the Cultivar variable to fill the bars with different colors. It then adds a bar layer that displays the mean DON values for each treatment, with the bars positioned side by side (dodge position). Additionally, it includes error bars representing the standard error of the mean for each bar. The y-axis is labeled "DON (ppm)" to indicate the concentration of DON in parts per million, while the x-axis label is set to an empty string, effectively removing it. Finally, the code adds individual data points to the plot, jittered within the dodge width to avoid overlap, with a specific shape and color. The resulting plot will show the mean DON levels for each treatment, with error bars and individual data points, and different colors representing different cultivars.
+```
+
+#5+6.
+```{r}
+DON_Plot <- ggplot(MycotoxinData, aes(x = Treatment, y = DON, fill = Cultivar)) + 
+  facet_wrap(~Cultivar) +
+  stat_summary(fun=mean, geom="bar", position = "dodge") +
+  stat_summary(fun.data = mean_se, geom = "errorbar", position = "dodge") +
+  ylab("DON (ppm)") +
+  xlab(" ") +
+  geom_point(position=position_jitterdodge(dodge.width=0.9), shape = 21, color = "#000") +
+  scale_fill_manual(values = cbbPalette, aesthetics = "fill")
+#I moved the colors down one so that the black error bars would show up. I think this looks a lot cleaner this way.
+#This R code creates a faceted bar plot using the ggplot2 package to visualize the mean DON levels across different treatments, with the data grouped by cultivar. The code starts by initializing the ggplot object with the MycotoxinData dataset, mapping the Treatment variable to the x-axis, the DON variable to the y-axis, and using the Cultivar variable to fill the bars with different colors. It then adds a faceting layer to create separate plots for each cultivar. The bar layer displays the mean DON values for each treatment, with the bars positioned side by side (dodge position). Additionally, it includes error bars representing the standard error of the mean for each bar. The y-axis is labeled "DON (ppm)" to indicate the concentration of DON in parts per million, while the x-axis label is set to an empty string, effectively removing it. Individual data points are added to the plot, jittered within the dodge width to avoid overlap, with a specific shape and color. Finally, the code customizes the fill colors of the bars using a manual color palette (cbbPalette). The resulting plot will show the mean DON levels for each treatment, with error bars and individual data points, and different colors representing different cultivars, all separated into individual facets for each cultivar.
+
+```
+
+
+#7.
+```{r}
+DON_Plot <- ggplot(MycotoxinData, aes(x = Treatment, y = DON, fill = Cultivar)) + 
+  facet_wrap(~Cultivar) +
+  stat_summary(fun=mean, geom="bar", position = "dodge") +
+  stat_summary(fun.data = mean_se, geom = "errorbar", position = "dodge") +
+  ylab("DON (ppm)") +
+  xlab(" ") +
+  geom_point(position=position_jitterdodge(dodge.width=0.9), shape = 21, color = "#000", alpha = 0.3) +
+  scale_fill_manual(values = cbbPalette, aesthetics = "fill")
+#This R code creates a faceted bar plot using the ggplot2 package to visualize the mean DON levels across different treatments, with the data grouped by cultivar. The code begins by initializing the ggplot object with the MycotoxinData dataset, mapping the Treatment variable to the x-axis, the DON variable to the y-axis, and using the Cultivar variable to fill the bars with different colors. It then adds a faceting layer to create separate plots for each cultivar. The bar layer displays the mean DON values for each treatment, with the bars positioned side by side (dodge position). Additionally, it includes error bars representing the standard error of the mean for each bar. The y-axis is labeled "DON (ppm)" to indicate the concentration of DON in parts per million, while the x-axis label is set to an empty string, effectively removing it. Individual data points are added to the plot, jittered within the dodge width to avoid overlap, with a specific shape, color, and transparency (alpha = 0.3). Finally, the code customizes the fill colors of the bars using a manual color palette (cbbPalette). The resulting plot will show the mean DON levels for each treatment, with error bars and individual data points, and different colors representing different cultivars, all separated into individual facets for each cultivar.
+```
+#8
+
+```{r}
+DON_Plot <- ggplot(MycotoxinData, aes(x = Treatment, y = DON, group = Cultivar, color = Cultivar)) + 
+  stat_summary(fun=mean, geom ="line") +
+  stat_summary(fun.data = mean_se, geom = "errorbar", width = 0.5) +
+  ylab("DON (ppm)") +
+  xlab(" ") +
+  scale_fill_manual(values = cbbPalette, aesthetics = "fill") +
+  facet_wrap(~Cultivar)
+  
+#I felt that the bar plot best showed the data accurately. I chose the line one because I feel it would be good to have some code for my own project to represent data over time!
+
+#This R code creates a faceted line plot using the ggplot2 package to visualize the mean DON levels across different treatments, with the data grouped by cultivar. The code starts by initializing the ggplot object with the MycotoxinData dataset, mapping the Treatment variable to the x-axis, the DON variable to the y-axis, and using the Cultivar variable to group and color the lines. It then adds a line layer that displays the mean DON values for each treatment. Additionally, it includes error bars representing the standard error of the mean for each point, with a specified width. The y-axis is labeled "DON (ppm)" to indicate the concentration of DON in parts per million, while the x-axis label is set to an empty string, effectively removing it. The code also customizes the fill colors using a manual color palette (cbbPalette). Finally, it adds a faceting layer to create separate plots for each cultivar. The resulting plot will show the mean DON levels for each treatment, with error bars and different colors representing different cultivars, all separated into individual facets for each cultivar.
+
+```
+
+#9 Forking a repository creates a branch of the reprository so that edits can be made and potentially merge with the main branch. It makes it easier for collaboration because people can fork a repository from the main branch, and then make edits, and then push the changes to their branch. These branches are now able to merge so that others are able to utlize these changes. all changes are tracked within a forked branch and even after they are merged with the main branch.
+
+
+
+
+
+
+
+
+
+
+
+
+
