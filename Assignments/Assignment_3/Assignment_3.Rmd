@@ -1,0 +1,212 @@
+---
+title: "Assignment_3"
+author: "Logan Luchs"
+date: "2025-02-18"
+output: html_document
+---
+###Loading Libraries
+```{r}
+setwd("Assignments/Assignment_3")
+library(ggplot2)
+library(readr)
+library(ggpubr)
+```
+
+###Loading Data
+```{r}
+MycotoxinData <- read.csv("MycotoxinData.csv", na = "na" ) #loading in the data so that R understands na is na so the column is numeric
+str(MycotoxinData) #checking to make sure data was loaded in correctly
+MycotoxinData$Cultivar <- as.factor(MycotoxinData$Cultivar)#since we are going to facet wrap it makes life easier to make the column a facter instead of a character.
+MycotoxinData$Treatment <- as.factor(MycotoxinData$Treatment) #same as above
+
+
+cbbPalette <- c("#56B4E9", "#009E73", "#F0E442",
+"#000000", "#D55E00", "#CC79A7", "#E69F00","#0072B2" ) #loading a color pallette
+```
+
+#1
+```{r}
+DON1_Plot <- ggplot(MycotoxinData, aes(x = Treatment, y = DON, fill = Cultivar)) + 
+  # Add a boxplot layer without outlier points
+  geom_boxplot(outlier.shape = NA) +
+  # Add jittered points to the plot for better visibility of individual data points
+  geom_point(position = position_jitterdodge(dodge.width = 0.9), shape = 21, alpha = 0.6) +
+  # Label the y-axis
+  ylab("DON (ppm)") +
+  # Label the x-axis (left blank in this case)
+  xlab(" ") +
+  # Manually set the fill colors using a predefined palette
+  scale_fill_manual(values = cbbPalette, aesthetics = "fill") +
+  # Apply a classic theme to the plot
+  theme_classic() +
+  # Create separate panels for each level of the 'Cultivar' variable
+  facet_wrap(~Cultivar)
+
+```
+
+#2.
+```{r}
+DON2_Plot <- ggplot(MycotoxinData, aes(x = factor(Treatment, level = c("NTC", "Fg", "Fg + 37", "Fg + 40", "Fg + 70")), y = DON, fill = Cultivar)) + 
+  # Add a boxplot layer without outlier points
+  geom_boxplot(outlier.shape = NA) +
+  # Add jittered points to the plot for better visibility of individual data points
+  geom_point(position = position_jitterdodge(dodge.width = 0.9), shape = 21, alpha = 0.6) +
+  # Label the y-axis
+  ylab("DON (ppm)") +
+  # Label the x-axis (left blank in this case)
+  xlab(" ") +
+  # Manually set the fill colors using a predefined palette
+  scale_fill_manual(values = cbbPalette, aesthetics = "fill") +
+  # Apply a classic theme to the plot
+  theme_classic() +
+  # Create separate panels for each level of the 'Cultivar' variable
+  facet_wrap(~Cultivar)
+
+```
+
+#3.
+```{r}
+DON3a_Plot <- ggplot(MycotoxinData, aes(x = Treatment, y = X15ADON, fill = Cultivar)) + 
+  # Add a boxplot layer without outlier points
+  geom_boxplot(outlier.shape = NA) +
+  # Add jittered points to the plot for better visibility of individual data points
+  geom_point(position = position_jitterdodge(dodge.width = 0.9), shape = 21, alpha = 0.6) +
+  # Label the y-axis
+  ylab("15ADON") +
+  # Label the x-axis (left blank in this case)
+  xlab(" ") +
+  # Manually set the fill colors using a predefined palette
+  scale_fill_manual(values = cbbPalette, aesthetics = "fill") +
+  # Apply a classic theme to the plot
+  theme_classic() +
+  # Create separate panels for each level of the 'Cultivar' variable
+  facet_wrap(~Cultivar)
+
+DON3b_Plot <- ggplot(MycotoxinData, aes(x = Treatment, y = MassperSeed_mg, fill = Cultivar)) + 
+  # Add a boxplot layer without outlier points
+  geom_boxplot(outlier.shape = NA) +
+  # Add jittered points to the plot for better visibility of individual data points
+  geom_point(position = position_jitterdodge(dodge.width = 0.9), shape = 21, alpha = 0.6) +
+  # Label the y-axis
+  ylab("Seed Mass (mg)") +
+  # Label the x-axis (left blank in this case)
+  xlab(" ") +
+  # Manually set the fill colors using a predefined palette
+  scale_fill_manual(values = cbbPalette, aesthetics = "fill") +
+  # Apply a classic theme to the plot
+  theme_classic() +
+  # Create separate panels for each level of the 'Cultivar' variable
+  facet_wrap(~Cultivar)
+
+###Make sure to save to R Object
+saveRDS(DON1_Plot, file = "DON1_PLOT") # since we set the working directory to assignment_3 therefore it saves within each assignment folder.
+saveRDS(DON3a_Plot, file = "DON3a_PLOT")
+saveRDS(DON3b_Plot, file = "DON3b_PLOT")
+```
+
+#4.
+
+```{r}
+
+CombinedPlot1 <- ggpubr::ggarrange(DON1_Plot,
+                                       DON3a_Plot,
+                                       DON3b_Plot,
+                                       labels = "AUTO",
+                                       nrow = 3, ncol = 1, common.legend = T)
+
+#Common legend makes it so theres only 1 legend for all of the figures; if it is set to F, each figure has their own respective legend. Arranging the plots so DON1 is A, DON3a is B. AUTO in capital yields ABC, where auto yields abc (lowercase) 3 rows, 1 column.
+
+```
+
+#5.
+```{r}
+DON5a_Plot <- ggplot(MycotoxinData, aes(x = Treatment, y = DON, group = Treatment, fill = Cultivar)) + 
+  # Create separate panels for each level of the 'Cultivar' variable
+  facet_wrap(~Cultivar) +
+  # Add a boxplot layer without outlier points
+  geom_boxplot(outlier.shape = NA) +
+  # Add jittered points to the plot for better visibility of individual data points
+  geom_point(position = position_jitterdodge(dodge.width = 0.9), shape = 21, alpha = 0.6) +
+  # Add pairwise comparison results using t-test
+  geom_pwc(method = "t.test", label = "{p.adj.format}.{p.adj.signif}") +
+  # Label the y-axis
+  ylab("DON (ppm)") +
+  # Label the x-axis (left blank in this case)
+  xlab(" ") +
+  # Manually set the fill colors using a predefined palette
+  scale_fill_manual(values = cbbPalette, aesthetics = "fill") +
+  # Apply a classic theme to the plot
+  theme_classic()
+  
+
+DON5b_Plot <- ggplot(MycotoxinData, aes(x = Treatment, y = X15ADON, group = Treatment, fill = Cultivar)) + 
+  # Add a boxplot layer without outlier points
+  geom_boxplot(outlier.shape = NA) +
+  # Add jittered points to the plot for better visibility of individual data points
+  geom_point(position = position_jitterdodge(dodge.width = 0.9), shape = 21, alpha = 0.6) +
+  # Add pairwise comparison results using t-test
+  geom_pwc(method = "t.test", label = "{p.adj.format}.{p.adj.signif}") +
+  # Label the y-axis
+  ylab("15ADON") +
+  # Label the x-axis (left blank in this case)
+  xlab(" ") +
+  # Manually set the fill colors using a predefined palette
+  scale_fill_manual(values = cbbPalette, aesthetics = "fill") +
+  # Apply a classic theme to the plot
+  theme_classic() +
+  # Create separate panels for each level of the 'Cultivar' variable
+  facet_wrap(~Cultivar)
+
+
+DON5c_Plot <- ggplot(MycotoxinData, aes(x = Treatment, y = MassperSeed_mg, group = Treatment, fill = Cultivar)) + 
+  # Add a boxplot layer without outlier points
+  geom_boxplot(outlier.shape = NA) +
+  # Add jittered points to the plot for better visibility of individual data points
+  geom_point(position = position_jitterdodge(dodge.width = 0.9), shape = 21, alpha = 0.6) +
+  # Add pairwise comparison results using t-test
+  geom_pwc(method = "t.test", label = "{p.adj.format}.{p.adj.signif}") +
+  # Label the y-axis
+  ylab("Seed Mass (mg)") +
+  # Label the x-axis (left blank in this case)
+  xlab(" ") +
+  # Manually set the fill colors using a predefined palette
+  scale_fill_manual(values = cbbPalette, aesthetics = "fill") +
+  # Apply a classic theme to the plot
+  theme_classic() +
+  # Create separate panels for each level of the 'Cultivar' variable
+  facet_wrap(~Cultivar)
+
+saveRDS(DON5a_Plot, file = "DON5a_PLOT") #See above for annotation
+saveRDS(DON5b_Plot, file = "DON5b_PLOT")
+saveRDS(DON5c_Plot, file = "DON5c_PLOT")
+
+
+CombinedPlot1 <- ggpubr::ggarrange(DON5a_Plot,
+                                       DON5b_Plot,
+                                       DON5c_Plot,
+                                       labels = "AUTO",
+                                       nrow = 3, ncol = 1, common.legend = T)
+
+
+#Common legend makes it so theres only 1 legend for all of the figures; if it is set to F, each figure has their own respective legend. Arranging the plots so DON1 is A, DON3a is B. AUTO in capital yields ABC, where auto yields abc (lowercase) 3 rows, 1 column.
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
