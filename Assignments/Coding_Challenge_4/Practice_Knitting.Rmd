@@ -1,0 +1,88 @@
+---
+title: "Assignment_4"
+author: "Logan Luchs"
+date: "2025-02-26"
+output: 
+  
+  word_document:
+  md_document:
+    variant: gfm
+  html_document:
+    toc: true
+    toc_float: true
+  pdf_document:
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+```{r Notes}
+#you can change the output by changing the order or by doing it in the knit tab
+#generating a table of contents toc: true like above (this works best with html format, but works for both)
+  #generates clickable links as a toc
+  #toc_float has a dropdown button.
+#html does not render on github
+#to render we have to make the command: md_document:
+ # variant: gfm
+#output: 
+  #md_document:
+    #variant: gfm
+  #html_document:
+    #toc: true
+    #toc_float: true
+  #word_document:
+  #pdf_document:
+#Above is a YAML Header
+#include/exclude a chunk is include = TRUE/FALSE
+#Echo=true it shows output
+    
+```
+
+
+This is an example of R code
+```{r Example}
+# This is R Code
+summary(mtcars)
+```
+
+This is how to include figures
+```{r Include Figures}
+library(ggplot2)
+data("mtcars")
+ggplot(mtcars, aes(x = wt, y = mpg))+
+  geom_point()
+```
+
+R Markdown Formatting Options
+
+# First Level Header
+## Second Level Header
+### Third Level Header
+**This text is Bolded**
+*This text is italics*
+1. one item
+2. another item
+  a. one subitem
+
+# Links
+
+[Link to my github](https://github.com/Logz1n/Reproducibility_Class)
+
+# Images
+
+![ggplot/image](relative file path)
+
+# Formatted Tables
+ 
+```{r}
+
+library(knitr)
+kable(mtcars, digits = 3, format = 'markdown')
+
+```
+
+
+
+
