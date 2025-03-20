@@ -37,6 +37,8 @@ library(tidyverse)
     ## ℹ Use the conflicted package (<http://conflicted.r-lib.org/>) to force all conflicts to become errors
 
 ``` r
+library(markdown)
+
 #Colorblind pallette
 cbbPalette <- c("#56B4E9", "#009E73", "#F0E442",
 "#000000", "#D55E00", "#CC79A7", "#E69F00","#0072B2" ) #loading a color pallette
@@ -98,3 +100,8 @@ Plot <- alpha_average2 %>%
   geom_line() +  # Add line geometry to the plot
   theme_classic()  # Apply classic theme to the plot
 ```
+
+<figure>
+<img src="Rplot.png" alt="Image" />
+<figcaption aria-hidden="true">Image</figcaption>
+</figure>

@@ -5,11 +5,11 @@ date: "2025-02-26"
 output:
   md_document:
     variant: gfm
-  word_document:
-    toc: true
   html_document:
     toc: true
     toc_float: true
+  word_document:
+    toc: true
   pdf_document:
 ---
 [Link to my Github](https://github.com/Logz1n/Reproducibility_Class)
@@ -23,6 +23,7 @@ library(readr)
 library(ggpubr)
 library(dplyr)
 library(tidyverse)
+library(markdown)
 
 #Colorblind pallette
 cbbPalette <- c("#56B4E9", "#009E73", "#F0E442",
@@ -71,12 +72,13 @@ alpha_average2 <- alpha_average %>%
 ```
 
 # Plotting
-```{r Plotting, echo=TRUE}
+```{r Plotting, include=TRUE}
 Plot <- alpha_average2 %>%
   select(Time_Point, diff.cotton.even, diff.soybean.even) %>%  # Select relevant columns for plotting
   pivot_longer(c(diff.cotton.even, diff.soybean.even), names_to = "diff") %>%  # Pivot data to long format for plotting
   ggplot(aes(x = Time_Point, y = value, color = diff)) +  # Create a ggplot with Time_Point on x-axis and value on y-axis, colored by diff
   geom_line() +  # Add line geometry to the plot
   theme_classic()  # Apply classic theme to the plot
-```
 
+```
+![Image](Rplot.png)
