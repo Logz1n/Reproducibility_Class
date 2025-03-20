@@ -1,0 +1,81 @@
+---
+title: "Assignment_5"
+author: "Logan Luchs"
+date: "2025-02-26"
+output:
+  md_document:
+  word_document:
+    toc: true
+  html_document:
+    toc: true
+    toc_float: true
+  pdf_document:
+---
+[Link to my Github](https://github.com/Logz1n/Reproducibility_Class)
+
+# Loading libraries and color pallettes
+```{r Loading Libraries and Pallettes} 
+#Loading Libraries
+library(ggplot2) 
+library(knitr)
+library(readr)
+library(ggpubr)
+library(dplyr)
+library(tidyverse)
+
+#Colorblind pallette
+cbbPalette <- c("#56B4E9", "#009E73", "#F0E442",
+"#000000", "#D55E00", "#CC79A7", "#E69F00","#0072B2" ) #loading a color pallette
+
+```
+
+# Reading in Data
+```{r Reading in Dataset}
+Diversity <- read.csv("Assignments/Coding_Challenge_5/DiversityData.csv", na = "na" ) #loading in the data so that R understands na is na so the column is numeric
+
+Metadata <- read.csv("Assignments/Coding_Challenge_5/Metadata.csv", na = "na" ) #loading in the data so that R understands na is na so the column is numeric
+```
+
+# Joining Data Frames Together
+```{r Joining Data Frames}
+alpha <- left_join(Metadata, Diversity, by = "Code")  # Join Metadata and Diversity data frames based on the "Code" column
+
+```
+
+# Calculating Pielou's evenness index 
+```{r Pielous evenness}
+alpha_even <- alpha %>%
+  mutate(logRich = log(richness)) %>%  # Add a column for the logarithm of richness
+  mutate(even = (shannon/logRich))  # Add a column for evenness as the ratio of Shannon diversity to log richness
+
+```
+
+# Calculating mean and standard error
+```{r Mean and Standard Error}
+alpha_average <- alpha_even %>%
+  group_by(Crop, Time_Point) %>%  # Group data by Crop and Time_Point
+  summarise(Mean.even = mean(even),  # Calculate the mean of evenness
+            n = n(),  # Count the number of observations
+            sd.dev = sd(even)) %>%  # Calculate the standard deviation of evenness
+  mutate(std.err = sd.dev/sqrt(n))  # Calculate the standard error
+```
+
+# Calculating difference of evenness in crops
+```{r Difference of Crops}
+alpha_average2 <- alpha_average %>%
+  select(Time_Point, Crop, Mean.even) %>%  # Select relevant columns
+  pivot_wider(names_from = Crop, values_from = Mean.even) %>%  # Pivot data to have Crop names as columns
+  mutate(diff.cotton.even = Soil - Cotton) %>%  # Calculate difference in evenness between Soil and Cotton
+  mutate(diff.soybean.even = Soil - Soybean)  # Calculate difference in evenness between Soil and Soybean
+```
+
+# Plotting
+```{r Plotting}
+Plot <- alpha_average2 %>%
+  select(Time_Point, diff.cotton.even, diff.soybean.even) %>%  # Select relevant columns for plotting
+  pivot_longer(c(diff.cotton.even, diff.soybean.even), names_to = "diff") %>%  # Pivot data to long format for plotting
+  ggplot(aes(x = Time_Point, y = value, color = diff)) +  # Create a ggplot with Time_Point on x-axis and value on y-axis, colored by diff
+  geom_line() +  # Add line geometry to the plot
+  theme_classic()  # Apply classic theme to the plot
+```
+
