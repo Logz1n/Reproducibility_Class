@@ -71,7 +71,7 @@ alpha_average2 <- alpha_average %>%
 ```
 
 # Plotting
-```{r Plotting}
+```{r Plotting, echo=TRUE}
 Plot <- alpha_average2 %>%
   select(Time_Point, diff.cotton.even, diff.soybean.even) %>%  # Select relevant columns for plotting
   pivot_longer(c(diff.cotton.even, diff.soybean.even), names_to = "diff") %>%  # Pivot data to long format for plotting
