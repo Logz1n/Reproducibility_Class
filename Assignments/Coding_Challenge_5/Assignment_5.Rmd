@@ -3,14 +3,14 @@ title: "Assignment_5"
 author: "Logan Luchs"
 date: "2025-02-26"
 output:
+  word_document:
+    toc: true
+  pdf_document:
   md_document:
     variant: gfm
   html_document:
     toc: true
     toc_float: true
-  word_document:
-    toc: true
-  pdf_document:
 ---
 [Link to my Github](https://github.com/Logz1n/Reproducibility_Class)
 
