@@ -8,7 +8,7 @@ These are links to analysis files (.md) Other files are also available.
 - [Coding Challenge 4](Assignments/Coding_Challenge_4/Assignment_4.md)
 - [Coding Challenge 5](Assignments/Coding_Challenge_5/Assignment_5.md)
 - [Coding Challenge 6](Assignments/Coding_Challenge_6/Assignment_6.md)
-- [Coding Challenge 6](Assignments/Coding_Challenge_7/Assignment_7.md)
+- [Coding Challenge 7](Assignments/Coding_Challenge_7/Assignment_7.md)
 
 ##File Tree
 ```r
