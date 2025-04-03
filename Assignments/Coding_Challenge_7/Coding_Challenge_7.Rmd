@@ -1,0 +1,125 @@
+---
+title: "Assignment_7"
+author: "Logan Luchs"
+date: "2025-04-03"
+output:
+  md_document:
+    variant: gfm
+  word_document:
+    toc: true
+  html_document:
+    toc: true
+    toc_float: true
+  pdf_document:
+---
+[Link to my Github](https://github.com/Logz1n/Reproducibility_Class)
+
+# Loading libraries and color pallettes
+```{r Loading Libraries and Pallettes, message=FALSE, warning=FALSE} 
+#Loading Libraries
+library(ggplot2) 
+library(knitr)
+library(readr)
+library(ggpubr)
+library(dplyr)
+library(tidyverse)
+library(markdown)
+library(emmeans)
+library(multcomp)
+library(lme4)
+#Colorblind pallette
+cbbPalette <- c("#56B4E9", "#009E73", "#F0E442",
+"#000000", "#D55E00", "#CC79A7", "#E69F00","#0072B2" ) #loading a color pallette
+
+```
+
+#1. Reading in Data
+```{r Reading in Dataset}
+Emergence.data <- read.csv("PlantEmergence.csv", na = "na" ) #loading in the data so that R understands na is na so the column is numeric
+#Saving categorical variables as a factor for linear modeling
+Emergence.data$Treatment <- as.factor(Emergence.data$Treatment)
+Emergence.data$DaysAfterPlanting <- as.factor(Emergence.data$DaysAfterPlanting)
+Emergence.data$Rep <- as.factor(Emergence.data$Rep)
+
+```
+
+#2. Linear Modeling
+```{r Linear Modeling}
+
+Results <- lm(Emergence~DaysAfterPlanting*Treatment, data = Emergence.data)
+summary(Results)
+anova(Results)
+```
+
+#3. Modeling without the interaction term
+```{r Modeling without the interaction term}
+#Since the interaction term was not significant, it does not need to be included in the model, if it were significant it would be beneficial to split the data to an individual section such as by treatment and look at how days after planting effected emergence. 
+
+Results2 <- lm(Emergence~DaysAfterPlanting + Treatment, data = Emergence.data)
+summary(Results2)
+anova(Results2)
+
+#Treatment 2 had an decrease of 134.531 +/- 3.425 plants emerged than treatment 1. (R^2 = 0.958, p < 2e-16)
+#The intercept (Treatment 1) had an emergence of 182.163 +/- 2.797. (R^2 = 0.958, p < 2e-16)
+
+```
+
+#4. Emmeans and Tukeys
+```{r Emmeans and Tukeys Test}
+
+lsmeans <- emmeans(Results2, ~Treatment) # estimate lsmeans of variety within siteXyear
+Results_lsmeans <- cld(lsmeans, alpha = 0.05, reversed = TRUE, details = TRUE) # contrast with Tukey ajustment by default. 
+Results_lsmeans
+
+#treatment 2 had significantly lower emergence from all of the other treatments (p < 0.0001). Treatment 5 and 7 were significantly different from each other (p = 0.0074), where 5 had an increase of 12.906 plants emerged when compared to treatment 7.
+ 
+```
+
+#5. Generating significance Letters
+```{r Significant Letters Plot}
+plot_cldbars_onefactor <- function(lm_model, factor) {
+data <- lm_model$model
+variables <- colnames(lm_model$model)
+dependent_var <- variables[1]
+independent_var <- variables[2:length(variables)]
+lsmeans <- emmeans(lm_model, as.formula(paste("~", factor))) # estimate
+lsmeans
+Results_lsmeans <- cld(lsmeans, alpha = 0.05, reversed = TRUE, details =
+TRUE, Letters = letters) # contrast with Tukey adjustment by default.
+# Extracting the letters for the bars
+sig.diff.letters <- data.frame(Results_lsmeans$emmeans[,1],
+str_trim(Results_lsmeans$emmeans[,7]))
+colnames(sig.diff.letters) <- c(factor, "Letters")
+# for plotting with letters from significance test
+ave_stand2 <- lm_model$model %>%
+  group_by(!!sym(factor)) %>%
+  dplyr::summarize(ave.emerge = mean(.data[[dependent_var]], na.rm = TRUE), se = sd(.data[[dependent_var]]) / sqrt(n())) %>%
+  left_join(sig.diff.letters, by = factor) %>%
+  mutate(letter_position = ave.emerge + 10 * se)
+plot <- ggplot(data, aes(x = !! sym(factor), y = !! sym(dependent_var))) +
+  stat_summary(fun = mean, geom = "bar") +
+  stat_summary(fun.data = mean_se, geom = "errorbar", width = 0.5) +
+  ylab("Number of emerged plants") +
+  geom_jitter(width = 0.02, alpha = 0.5) +
+  geom_text(data = ave_stand2, aes(label = Letters, y = letter_position),
+  size = 5) +
+  xlab(as.character(factor)) +
+  theme_classic()
+return(plot)
+}
+
+plot_cldbars_onefactor(Results2, "Treatment")
+
+#When categorizing the letters, a is different from b, which are different from c. If a bar has ab that means a and b were not statistically different, however if a bar has 'a' and a different bar has 'b' that means they are statistically significantly different from each other. When comparing a bar that has 'a' and a bar that has 'ab' that means they are not statistically significantly different from each other. This also shows the results from question 4's interpretation.
+
+```
+
+
+
+
+
+
+
+
+
+
